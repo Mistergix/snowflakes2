@@ -26,6 +26,15 @@ public class HexaGrid : MonoBehaviour
     public int NbCellsbyWidth { get; set; }
     public Dictionary<Vector2Int, HexaCell> Cells { get => cells; private set => cells = value; }
 
+    public HexaCell GetCell(Vector2Int position)
+    {
+        if(cells.TryGetValue(position, out HexaCell hexaCell))
+        {
+            return hexaCell;
+        }
+        throw new UnityException("La position n'est pas enregistrée " + position);
+    }
+
     // Start is called before the first frame update
     void Awake()
    	{

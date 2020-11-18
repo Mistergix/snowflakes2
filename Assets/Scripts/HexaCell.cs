@@ -12,26 +12,28 @@ public class HexaCell : MonoBehaviour
     public int R { get => r; set => r = value; }
     public int S { get => s; set => s = value; }
     public bool IsEdge { get => isEdge; set => isEdge = value; }
+    public float State { get => state; set => state = value; }
+    public float OldState { get => oldState; set => oldState = value; }
 
     [SerializeField] private SpriteRenderer renderer;
 
     public void SetState(float t)
     {
-        state = t;
+        State = t;
     }
 
     public void UpdateState()
     {
-        oldState = state;
-        renderer.color = Color.Lerp(new Color(66f / 255, 134f / 255, 244f / 255), new Color(1, 1, 1), state);
+        OldState = State;
+        renderer.color = Color.Lerp(new Color(66f / 255, 134f / 255, 244f / 255), new Color(1, 1, 1), State);
     }
 
     public void Init(int q, int r, float state)
         {
             this.Q = q;
             this.R = r;
-            this.state = state;
-            oldState = state;
+            this.State = state;
+            OldState = state;
             S = -q - r;
         }
 

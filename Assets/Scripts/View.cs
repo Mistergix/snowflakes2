@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class View : MonoBehaviour
 {
+    [SerializeField] private Model model;
     [SerializeField] private HexaGrid hexaGrid;
     [SerializeField] private float timeToUpdate = 0.2f;
 
@@ -12,6 +13,7 @@ public class View : MonoBehaviour
     {
         DOVirtual.DelayedCall(timeToUpdate, () =>
         {
+            model.UpdateGrid();
             hexaGrid.UpdateGrid();
         }).SetLoops(-1);
     }
