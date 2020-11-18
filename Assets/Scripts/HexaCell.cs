@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HexaCell
+public class HexaCell : MonoBehaviour
 	{
         private int q, r, s;
         private float state, oldState;
@@ -13,7 +13,20 @@ public class HexaCell
     public int S { get => s; set => s = value; }
     public bool IsEdge { get => isEdge; set => isEdge = value; }
 
-    public HexaCell(int q, int r, float state)
+    [SerializeField] private SpriteRenderer renderer;
+
+    public void SetState(float t)
+    {
+        state = t;
+    }
+
+    public void UpdateState()
+    {
+        oldState = state;
+        renderer.color = Color.Lerp(new Color(66f / 255, 134f / 255, 244f / 255), new Color(1, 1, 1), state);
+    }
+
+    public void Init(int q, int r, float state)
         {
             this.Q = q;
             this.R = r;
