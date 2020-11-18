@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TetrisCity.Celine
-{
-	public class HexaCell : MonoBehaviour
+public class HexaCell
 	{
         private int q, r, s;
         private float state, oldState;
         private bool isEdge;
 
-        public void Init(int q, int r, float state, bool isEdge)
+    public int Q { get => q; set => q = value; }
+    public int R { get => r; set => r = value; }
+    public int S { get => s; set => s = value; }
+    public bool IsEdge { get => isEdge; set => isEdge = value; }
+
+    public HexaCell(int q, int r, float state)
         {
-            this.q = q;
-            this.r = r;
+            this.Q = q;
+            this.R = r;
             this.state = state;
-            this.isEdge = isEdge;
             oldState = state;
-            s = -q - r;
+            S = -q - r;
         }
 
         public List<Vector2Int> GetFalseNeightbours()
@@ -35,7 +37,7 @@ namespace TetrisCity.Celine
 
             foreach (var o in offset)
             {
-                neightbours.Add(new Vector2Int(q + o.x, r + o.y));
+                neightbours.Add(new Vector2Int(Q + o.x, R + o.y));
             }
 
             return neightbours;
@@ -52,4 +54,3 @@ namespace TetrisCity.Celine
         		
     	}
 	}
-}
