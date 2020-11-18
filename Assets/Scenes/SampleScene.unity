@@ -426,5 +426,5 @@ MonoBehaviour:
   rayon: 40
   prefabCell: {fileID: -138253540578284473, guid: 40f119fbecded37488d6af8fdd7b6d35,
     type: 3}
-  orthoRef: 1.25
-  rayonRef: 1
+  orthoRef: 32
+  rayonRef: 40
