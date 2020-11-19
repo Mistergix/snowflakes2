@@ -9,11 +9,23 @@ public class View : MonoBehaviour
     [SerializeField] private HexaGrid hexaGrid;
     [SerializeField] private float timeToUpdate = 0.2f;
 
+    [SerializeField]
+    private float orthoRef = 32;
+    [SerializeField]
+    private int rayonRef = 40;
+
+    [SerializeField] private int speedFactor = 2;
+
     private void Start()
     {
-        DOVirtual.DelayedCall(timeToUpdate, () =>
+        Camera.main.orthographicSize = (float)hexaGrid.GridData.Rayon / rayonRef * orthoRef;
+
+        DOVirtual.DelayedCall(0, () =>
         {
-            model.UpdateGrid();
+            for (int i = 0; i < speedFactor; i++)
+            {
+                model.UpdateGrid();
+            }
             hexaGrid.UpdateGrid();
         }).SetLoops(-1);
     }

@@ -6,66 +6,64 @@ using UnityEngine;
 
 public class HexaGrid : MonoBehaviour
 {
+    HexaGridData gridData;
+
     [SerializeField]
     private int rayon;
     [SerializeField]
     private HexaCell prefabCell;
-    [SerializeField]
-    private float orthoRef = 8;
-    [SerializeField]
-    private int rayonRef = 10;
-    private HashSet<Vector2Int> positionsCubic;
-
     
-
-    private Dictionary<Vector2Int, HexaCell> cells;
-
+    
     private Grid grid;
 
 
-    public int NbCellsbyWidth { get; set; }
-    public Dictionary<Vector2Int, HexaCell> Cells { get => cells; private set => cells = value; }
+    private Dictionary<Vector2Int, HexaCell> hexaCells;
 
-    public HexaCell GetCell(Vector2Int position)
+    public HexaGridData GridData { get => gridData; set => gridData = value; }
+    public Dictionary<Vector2Int, HexaCell> HexaCells { get => hexaCells; set => hexaCells = value; }
+
+    public HexaGridData CleanClone()
     {
-        if(cells.TryGetValue(position, out HexaCell hexaCell))
+        HexaGridData data = new HexaGridData(grid, rayon);
+
+        foreach (var posCubic in data.PositionsCubic)
+        {
+            HexaCellData hCell = GetCell(posCubic);
+            data.Cells.Add(posCubic, new HexaCellData(hCell));
+        }
+
+        return data;
+    }
+
+    public HexaCell GetHexaCell(Vector2Int position)
+    {
+        if (HexaCells.TryGetValue(position, out HexaCell hexaCell))
         {
             return hexaCell;
         }
         throw new UnityException("La position n'est pas enregistrée " + position);
     }
 
+    public HexaCellData GetCell(Vector2Int position)
+    {
+        return GridData.GetCell(position);
+    }
+
     // Start is called before the first frame update
     void Awake()
    	{
-        /*
-        var height = Camera.main.orthographicSize * 2.0f;
-        var width = height * Screen.width / Screen.height;
-        transform.localScale = new Vector3(width / 10f, 0.1f, height / 10f);*/
-
-        Camera.main.orthographicSize = (float)rayon / rayonRef * orthoRef;
-
         grid = GetComponent<Grid>();
+        GridData = new HexaGridData(grid, rayon);
 
-        Cells = new Dictionary<Vector2Int, HexaCell>();
-        NbCellsbyWidth = 2 * rayon + 1;
+        HexaCells = new Dictionary<Vector2Int, HexaCell>();
 
-        positionsCubic = new HashSet<Vector2Int>();
-        for(int q = -rayon; q <= rayon; q++)
-        {
-            int r1 = Mathf.Max(-rayon, -q - rayon);
-            int r2 = Mathf.Min(rayon, -q + rayon);
-            for(int r = r1; r <= r2; r++)
-            {
-                positionsCubic.Add(new Vector2Int(q, r));
-            }
-        }
-
-        foreach (var posCubic in positionsCubic)
+        foreach (var posCubic in GridData.PositionsCubic)
         {
             HexaCell cell = Instantiate(prefabCell);
             cell.Init(posCubic.x, posCubic.y, 0);
-            Cells.Add(posCubic, cell);
+
+            GridData.Cells.Add(posCubic, cell.CellData);
+            HexaCells.Add(posCubic, cell);
 
             int col = posCubic.x + (posCubic.y - (posCubic.y & 1)) / 2;
             int row = posCubic.y;
@@ -73,10 +71,9 @@ public class HexaGrid : MonoBehaviour
             cell.transform.position = grid.CellToWorld(new Vector3Int(col, row, 0));
         }
 
-        foreach (HexaCell cell in Cells.Values)
+        foreach (HexaCellData cell in GridData.Cells.Values)
         {
             cell.IsEdge = GetNeightbours(cell).Count != 6;
-            cell.gameObject.name = $"Cell {cell.Q}, {cell.R}, {cell.IsEdge}";
         }
 
         UpdateGrid();
@@ -84,31 +81,14 @@ public class HexaGrid : MonoBehaviour
 
     internal void UpdateGrid()
     {
-        foreach (var item in Cells)
+        foreach (var item in HexaCells)
         {
             item.Value.UpdateState();
         }
     }
 
-    public List<HexaCell> GetNeightbours(HexaCell cell)
+    public List<HexaCellData> GetNeightbours(HexaCellData cell)
     {
-        List<Vector2Int> falseNeightbours = cell.GetFalseNeightbours();
-        List<HexaCell> hexacells = new List<HexaCell>();
-
-        foreach(var x in falseNeightbours)
-        {
-            if (Cells.TryGetValue(x, out HexaCell c))
-            {
-                hexacells.Add(c);
-            }
-        }
-
-        return hexacells;
-    }
-
-	// Update is called once per frame
-    void Update()
-    {
-        	
+        return gridData.GetNeighbours(cell);
     }
 }

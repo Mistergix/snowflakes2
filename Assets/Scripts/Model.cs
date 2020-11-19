@@ -18,7 +18,7 @@ public class Model : MonoBehaviour
 	// Start is called before the first frame update
    	void Start()
    	{
-        foreach (var cell in grid.Cells)
+        foreach (var cell in grid.GridData.Cells)
         {
             int q = cell.Value.Q;
             int r = cell.Value.R;
@@ -30,87 +30,84 @@ public class Model : MonoBehaviour
             {
                 cell.Value.SetState(beta);
             }
-            cell.Value.UpdateState();
+
+            grid.GetHexaCell(cell.Key).UpdateState();
         }
     }
 
     public void UpdateGrid()
     {
-        HexaGrid rec = Instantiate(hexagridPrefab);
-        HexaGrid nonrec = Instantiate(hexagridPrefab);
+        HexaGridData rec = grid.CleanClone();
+        HexaGridData nonrec = grid.CleanClone();
 
-        foreach (var x in grid.Cells)
+        foreach (var x in grid.GridData.Cells)
         {
-            HexaCell cell = x.Value;
+            HexaCellData cell = x.Value;
             if (cell.IsEdge) continue;
-            if (rec.Cells.TryGetValue(x.Key,out HexaCell recCell)) {
-                if (nonrec.Cells.TryGetValue(x.Key, out HexaCell nonRecCell))
-                {
-                    bool recept = false;
-                    if (cell.OldState >= 1) recept = true;
-                    else
-                    {
-                        foreach (var item in grid.GetNeightbours(cell))
-                        {
-                            if(item.OldState >= 1)
-                            {
-                                recept = true;
-                                break;
-                            }
-                           
-                        }
 
-                    }
-                    if (recept)
-                    {
-                        recCell.State = cell.State;
-                        nonRecCell.State = 0;
-                    }
-                    else
-                    {
-                        recCell.State = 0;
-                        nonRecCell.State = cell.State;
-                    }
+            HexaCellData recCell = rec.GetCell(x.Key);
+            HexaCellData nonRecCell = nonrec.GetCell(x.Key);
 
-                    recCell.UpdateState();
-                    nonRecCell.UpdateState();
-                    if(recCell.State != 0)
-                    {
-                        recCell.State += gamma;
-                    }
-                }
-            }
-        }
-
-        foreach (var x in grid.Cells)
-        {
-            HexaCell cell = x.Value;
-            if (cell.IsEdge) continue;
-            if (nonrec.Cells.TryGetValue(x.Key, out HexaCell nonRecCell))
+           
+            bool recept = false;
+            if (cell.OldState >= 1) recept = true;
+            else
             {
-                cell.UpdateState();
-                cell.State = alpha * (nonRecCell.State / 2) + alpha * GetNeightboursSum(nonRecCell, nonrec) + rec.GetCell(x.Key).State;
+                foreach (var item in grid.GetNeightbours(cell))
+                {
+                    if(item.OldState >= 1)
+                    {
+                        recept = true;
+                        break;
+                    }
+                           
+                }
+
             }
+            if (recept)
+            {
+                recCell.State = cell.State;
+                nonRecCell.State = 0;
+            }
+            else
+            {
+                recCell.State = 0;
+                nonRecCell.State = cell.State;
+            }
+
+            //recCell.HexaCellInstance.UpdateState();
+            //nonRecCell.HexaCellInstance.UpdateState();
+
+            recCell.OldState = recCell.State;
+            nonRecCell.OldState = nonRecCell.State;
+
+            if(recCell.State != 0)
+            {
+                recCell.State += gamma;
+            }
+                
+            
         }
 
-        Destroy(nonrec);
-        Destroy(rec);
+        foreach (var x in grid.GridData.Cells)
+        {
+            HexaCellData cell = x.Value;
+            if (cell.IsEdge) continue;
+
+            HexaCellData nonRecCell = nonrec.GetCell(x.Key);
+            cell.OldState = cell.State;
+            cell.State = alpha * (nonRecCell.State / 2) + alpha * GetNeightboursSum(nonRecCell, nonrec) + rec.GetCell(x.Key).State;
+        }
     }
 
-    private float GetNeightboursSum(HexaCell cell, HexaGrid g)
+    private float GetNeightboursSum(HexaCellData cell, HexaGridData g)
     {
         float sum = 0;
-        foreach (var item in g.GetNeightbours(cell))
+        foreach (var item in g.GetNeighbours(cell))
         {
             sum += item.OldState;
         }
 
         return sum / 12;
-    }
-
-	// Update is called once per frame
-    void Update()
-    {
-            
     }
 }

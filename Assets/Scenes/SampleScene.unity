@@ -151,8 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alpha: 1
-  beta: 0.4
-  gamma: 0.001
+  beta: 0.3
+  gamma: 0.0001
   grid: {fileID: 1348942870}
   hexagridPrefab: {fileID: 5108007725631594498, guid: 9ac4a0571a97d4e4c8937b85af358669,
     type: 3}
@@ -299,6 +299,9 @@ MonoBehaviour:
   model: {fileID: 143713008}
   hexaGrid: {fileID: 1348942870}
   timeToUpdate: 0.2
+  orthoRef: 32
+  rayonRef: 40
+  speedFactor: 4
 --- !u!114 &1348942870 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5108007725631594498, guid: 9ac4a0571a97d4e4c8937b85af358669,
@@ -372,6 +375,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5108007725631594498, guid: 9ac4a0571a97d4e4c8937b85af358669,
+        type: 3}
+      propertyPath: rayon
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5108007725631594503, guid: 9ac4a0571a97d4e4c8937b85af358669,
         type: 3}

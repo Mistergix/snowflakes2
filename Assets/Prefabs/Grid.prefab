@@ -57,11 +57,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d28753e7652e9b4c81e3cbd02ec1c36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayon: 40
+  rayon: 3
   prefabCell: {fileID: -138253540578284473, guid: 40f119fbecded37488d6af8fdd7b6d35,
     type: 3}
-  orthoRef: 1.25
-  rayonRef: 1
+  orthoRef: 32
+  rayonRef: 40
 --- !u!1 &5108007726577978822
 GameObject:
   m_ObjectHideFlags: 0
