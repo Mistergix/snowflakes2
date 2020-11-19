@@ -9,12 +9,8 @@ public class HexaCell : MonoBehaviour
 
     [SerializeField] private SpriteRenderer renderer;
     [SerializeField] private Text stateText;
-    [SerializeField] private bool showState;
+    private bool showState;
 
-    private void Start()
-    {
-        stateText.transform.parent.gameObject.SetActive(showState);
-    }
 
     public HexaCellData CellData { get => cellData; set => cellData = value; }
 
@@ -38,10 +34,13 @@ public class HexaCell : MonoBehaviour
         
     }
 
-    public void Init(int q, int r, float state)
+    public void Init(int q, int r, float state, bool showState)
         {
         CellData = new HexaCellData(q, r, state, this);
-        }
+        this.showState = showState;
+
+        stateText.transform.parent.gameObject.SetActive(showState);
+    }
 
         
 	}

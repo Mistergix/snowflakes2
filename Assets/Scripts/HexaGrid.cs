@@ -7,8 +7,6 @@ using UnityEngine;
 public class HexaGrid : MonoBehaviour
 {
     HexaGridData gridData;
-
-    [SerializeField]
     private int rayon;
     [SerializeField]
     private HexaCell prefabCell;
@@ -19,12 +17,18 @@ public class HexaGrid : MonoBehaviour
 
     private Dictionary<Vector2Int, HexaCell> hexaCells;
 
+    private void Start()
+    {
+        HexaCells = new Dictionary<Vector2Int, HexaCell>();
+    }
+
     public HexaGridData GridData { get => gridData; set => gridData = value; }
     public Dictionary<Vector2Int, HexaCell> HexaCells { get => hexaCells; set => hexaCells = value; }
+    public int Rayon { get => rayon; set => rayon = value; }
 
     public HexaGridData CleanClone()
     {
-        HexaGridData data = new HexaGridData(grid, rayon);
+        HexaGridData data = new HexaGridData(grid, Rayon);
 
         foreach (var posCubic in data.PositionsCubic)
         {
@@ -50,17 +54,22 @@ public class HexaGrid : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Awake()
-   	{
+    public void ResetGrid(bool showState)
+    {
         grid = GetComponent<Grid>();
-        GridData = new HexaGridData(grid, rayon);
+        GridData = new HexaGridData(grid, Rayon);
+
+        foreach (var item in HexaCells)
+        {
+            Destroy(item.Value.gameObject);
+        }
 
         HexaCells = new Dictionary<Vector2Int, HexaCell>();
 
         foreach (var posCubic in GridData.PositionsCubic)
         {
             HexaCell cell = Instantiate(prefabCell);
-            cell.Init(posCubic.x, posCubic.y, 0);
+            cell.Init(posCubic.x, posCubic.y, 0, showState);
 
             GridData.Cells.Add(posCubic, cell.CellData);
             HexaCells.Add(posCubic, cell);

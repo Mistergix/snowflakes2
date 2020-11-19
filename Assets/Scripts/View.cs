@@ -16,11 +16,27 @@ public class View : MonoBehaviour
 
     [SerializeField] private int speedFactor = 2;
 
-    private void Start()
-    {
-        Camera.main.orthographicSize = (float)hexaGrid.GridData.Rayon / rayonRef * orthoRef;
+    Camera mainCam;
 
-        DOVirtual.DelayedCall(0, () =>
+    private bool play;
+
+    public void ChangeCamFOV(float fov)
+    {
+        mainCam.orthographicSize = fov;
+    }
+
+    public void PausePlay()
+    {
+        modelTween.TogglePause();
+    }
+
+    Tween modelTween;
+
+    public void StartModel()
+    {
+        modelTween?.Kill();
+
+        modelTween = DOVirtual.DelayedCall(0, () =>
         {
             for (int i = 0; i < speedFactor; i++)
             {
@@ -28,5 +44,12 @@ public class View : MonoBehaviour
             }
             hexaGrid.UpdateGrid();
         }).SetLoops(-1);
+    }
+
+    private void Start()
+    {
+        mainCam = Camera.main;
+        ChangeCamFOV(32);
+        
     }
 }

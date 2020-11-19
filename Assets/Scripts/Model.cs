@@ -6,29 +6,28 @@ using UnityEngine;
 
 public class Model : MonoBehaviour
 {
-    [SerializeField]
-    float alpha, beta, gamma;
+    float beta, gamma;
     
     [SerializeField]
     HexaGrid grid;
 
-    [SerializeField]
-    HexaGrid hexagridPrefab;
+    public float Beta { get => beta; set => beta = value; }
+    public float Gamma { get => gamma; set => gamma = value; }
 
-	// Start is called before the first frame update
-   	void Start()
-   	{
+    // Start is called before the first frame update
+    public void ResetModel()
+    {
         foreach (var cell in grid.GridData.Cells)
         {
             int q = cell.Value.Q;
             int r = cell.Value.R;
-            if( q == 0 && r == 0)
+            if (q == 0 && r == 0)
             {
                 cell.Value.SetState(1);
             }
             else
             {
-                cell.Value.SetState(beta);
+                cell.Value.SetState(Beta);
             }
 
             grid.GetHexaCell(cell.Key).UpdateState();
@@ -83,7 +82,7 @@ public class Model : MonoBehaviour
 
             if(recCell.State != 0)
             {
-                recCell.State += gamma;
+                recCell.State += Gamma;
             }
                 
             
@@ -96,7 +95,7 @@ public class Model : MonoBehaviour
 
             HexaCellData nonRecCell = nonrec.GetCell(x.Key);
             cell.OldState = cell.State;
-            cell.State = alpha * (nonRecCell.State / 2) + alpha * GetNeightboursSum(nonRecCell, nonrec) + rec.GetCell(x.Key).State;
+            cell.State = (nonRecCell.State / 2) + GetNeightboursSum(nonRecCell, nonrec) + rec.GetCell(x.Key).State;
         }
     }
 
